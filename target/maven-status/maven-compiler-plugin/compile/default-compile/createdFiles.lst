@@ -1,0 +1,6 @@
+com/binu/microprofile/bookstore/service/BookService.class
+com/airhacks/health/boundary/LivenessCheck.class
+com/binu/microprofile/bookstore/rest/BookStoreEndpoint.class
+com/binu/microprofile/bookstore/entity/Book.class
+com/airhacks/JAXRSConfiguration.class
+com/airhacks/ping/boundary/PingResource.class

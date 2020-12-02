@@ -1,0 +1,354 @@
+Tutorial Resource
+https://cicekhayri.github.io/ebook-Building-an-API-Backend-with-MicroProfile/building-an-api-backend-with-microprofile.pdf
+
+Create Project with Mvn archetype
+mvn archetype:generate -DarchetypeGroupId=com.airhacks -DarchetypeArtifactId=microprofile-essentials-archetype -DarchetypeVersion=0.0.2 -DgroupId=com.binu.microprofile -DartifactId=book-store -Dversion=1.0-SNAPSHOT
+
+Need to put in all the key dependencies in pom.xml ( the archetype does not generate whole lot)
+
+Test pom.xml
+mvn clean package
+
+Put in the code
+Compile and run locally
+mvn clean package payara-micro:start
+
+Console output
+...
+...
+[2020-12-01T17:56:12.336-0500] [] [INFO] [] [PayaraMicro] [tid: _ThreadID=1 _ThreadName=main] [timeMillis: 1606863372336] [levelValue: 800] [[
+
+{
+    "Instance Configuration": {
+        "Host": "10.0.0.17",
+        "Http Port(s)": "8080",
+        "Https Port(s)": "",
+        "Instance Name": "Gorgeous-Koi",
+        "Instance Group": "MicroShoal",
+        "Hazelcast Member UUID": "a3fec06a-3de2-4ea0-bdc3-bf85a3bfaf77",
+        "Deployed": [
+            {
+                "Name": "book-store",
+                "Type": "war",
+                "Context Root": "/book-store"
+            }
+        ]
+    }
+}]]
+
+[2020-12-01T17:56:12.339-0500] [] [INFO] [] [PayaraMicro] [tid: _ThreadID=1 _ThreadName=main] [timeMillis: 1606863372339] [levelValue: 800] [[
+
+Payara Micro URLs:
+http://10.0.0.17:8080/book-store
+
+'book-store' REST Endpoints:
+GET	/book-store/resources/application.wadl
+GET	/book-store/resources/books
+POST	/book-store/resources/books
+GET	/book-store/resources/books/{id}
+GET	/book-store/resources/ping
+
+]]
+
+[2020-12-01T17:56:12.340-0500] [] [INFO] [] [PayaraMicro] [tid: _ThreadID=1 _ThreadName=main] [timeMillis: 1606863372340] [levelValue: 800] Payara Micro  5.193 #badassmicrofish (build 252) ready in 12,168 (ms)
+
+
+Get the URLs from the the console output.. as in the following
+http://10.0.0.17:8080/book-store/resources/books
+
+List Books ( Empty as there is no data)
+➜  ~ curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://10.0.0.17:8080/book-store/resources/books
+HTTP/1.1 200 OK
+Server: Payara Micro #badassfish
+Content-Type: application/json
+Content-Length: 2
+X-Frame-Options: SAMEORIGIN
+
+[]%
+
+Add a book
+curl -i -X POST -H "Content-Type:application/json" \
+  --data '{"title":"This is my test book","description":"this is my book description",
+  "isbn": "12xxxxxxxx", "publisher": "None Yet",
+"language":"English","author":"Hayri Cicek",
+  "price": "0.00","pages":"0"}' http://10.0.0.17:8080/book-store/resources/books
+
+  ➜  ~ curl -i -X POST -H "Content-Type:application/json" \
+  --data '{"title":"This is my test book","description":"this is my book description",
+  "isbn": "12xxxxxxxx", "publisher": "None Yet",
+"language":"English","author":"Hayri Cicek",
+  "price": "0.00","pages":"0"}' http://10.0.0.17:8080/book-store/resources/books
+HTTP/1.1 200 OK
+Server: Payara Micro #badassfish
+Content-Length: 0
+X-Frame-Options: SAMEORIGIN
+
+
+List Books ( now see the one book that we added )
+➜  ~ curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://10.0.0.17:8080/book-store/resources/books
+HTTP/1.1 200 OK
+Server: Payara Micro #badassfish
+Content-Type: application/json
+Content-Length: 171
+X-Frame-Options: SAMEORIGIN
+
+[{"description":"this is my book description","id":1,"isbn":"12xxxxxxxx","language":"English","pages":0,"price":0.0,"publisher":"None Yet","title":"This is my test book"}]%
+➜  ~
+
+Add One more book
+➜  ~ curl -i -X POST -H "Content-Type:application/json" \
+  --data '{"title":"This is my second test book","description":"this is my second book description",
+  "isbn": "13xxxxxxxx", "publisher": "None Yet",
+"language":"English","author":"Hayri Cicek",
+  "price": "0.00","pages":"0"}' http://10.0.0.17:8080/book-store/resources/books
+HTTP/1.1 200 OK
+Server: Payara Micro #badassfish
+Content-Length: 0
+X-Frame-Options: SAMEORIGIN
+
+List the books ( See the first and second book)
+➜  ~ curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://10.0.0.17:8080/book-store/resources/books
+HTTP/1.1 200 OK
+Server: Payara Micro #badassfish
+Content-Type: application/json
+Content-Length: 355
+X-Frame-Options: SAMEORIGIN
+
+[{"description":"this is my book description","id":1,"isbn":"12xxxxxxxx","language":"English","pages":0,"price":0.0,"publisher":"None Yet","title":"This is my test book"},{"description":"this is my second book description","id":2,"isbn":"13xxxxxxxx","language":"English","pages":0,"price":0.0,"publisher":"None Yet","title":"This is my second test book"}]%
+➜  ~
+
+Update second book
+➜  ~ curl -H 'Content-Type: application/json' -X PUT \
+-d '{"title":"This is my second test book updated","description":"this is my secondbook description updated",
+  "isbn": "13xxxxxxxx", "publisher": "None Yet",
+"language":"English","author":"Hayri Cicek",
+  "price": "1.00","pages":"0"}' http://10.0.0.17:8080/book-store/resources/books/2
+
+Get the secon book  to see the updated description
+➜  ~ curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://10.0.0.17:8080/book-store/resources/books/2
+HTTP/1.1 200 OK
+Server: Payara Micro #badassfish
+Content-Type: application/json
+Content-Length: 198
+X-Frame-Options: SAMEORIGIN
+
+{"description":"this is my secondbook description updated","id":2,"isbn":"13xxxxxxxx","language":"English","pages":0,"price":1.0,"publisher":"None Yet","title":"This is my second test book updated"}%
+➜
+
+Delete the second book
+➜  ~ curl -X DELETE http://10.0.0.17:8080/book-store/resources/books/2
+
+List books again to see only one, the second is deleted
+➜  ~ curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://10.0.0.17:8080/book-store/resources/books
+HTTP/1.1 200 OK
+Server: Payara Micro #badassfish
+Content-Type: application/json
+Content-Length: 171
+X-Frame-Options: SAMEORIGIN
+
+[{"description":"this is my book description","id":1,"isbn":"12xxxxxxxx","language":"English","pages":0,"price":0.0,"publisher":"None Yet","title":"This is my test book"}]%
+➜  ~
+
+Read Config Properties from classpath:META-INF/microprofile-config.properties
+➜  ~ curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://10.0.0.17:8080/book-store/resources/books/mp-config
+HTTP/1.1 200 OK
+Server: Payara Micro #badassfish
+Content-Type: application/json
+Content-Length: 240
+X-Frame-Options: SAMEORIGIN
+
+{"password":"secret","microprofile-apis":["{\"config\""," \"cdi\""," \"jax-rs\""," \"json-p\""," \"fault tolerance\""," \"healthcheck\""," \"jwt auth\""," \"metrics\""," \"openapi\""," \"opentracing\"","\"rest client\"}"],"username":"root"}
+
+metrics
+=======
+
+@Timed(name = "getAllBooks",
+  description = "Monitor the time getAll Method takes",
+  unit = MetricUnits.MILLISECONDS,
+  absolute = true)
+
+  http://10.0.0.17:8080/metrics/application
+  # TYPE application_getAllBooks_rate_per_second gauge
+application_getAllBooks_rate_per_second 0.017551531282623628
+# TYPE application_getAllBooks_one_min_rate_per_second gauge
+application_getAllBooks_one_min_rate_per_second 0.016327387822657587
+# TYPE application_getAllBooks_five_min_rate_per_second gauge
+application_getAllBooks_five_min_rate_per_second 0.11964219409666318
+# TYPE application_getAllBooks_fifteen_min_rate_per_second gauge
+application_getAllBooks_fifteen_min_rate_per_second 0.16841087578722722
+# TYPE application_getAllBooks_mean_seconds gauge
+application_getAllBooks_mean_seconds 0.007984079935130032
+# TYPE application_getAllBooks_max_seconds gauge
+application_getAllBooks_max_seconds 0.031537084
+# TYPE application_getAllBooks_min_seconds gauge
+application_getAllBooks_min_seconds 6.34536E-4
+# TYPE application_getAllBooks_stddev_seconds gauge
+application_getAllBooks_stddev_seconds 0.012679289939881249
+# TYPE application_getAllBooks_seconds summary
+# HELP application_getAllBooks_seconds Monitor the time getAll Method takes
+application_getAllBooks_seconds_count 3
+application_getAllBooks_seconds{quantile="0.5"} 0.001851755
+application_getAllBooks_seconds{quantile="0.75"} 0.001851755
+application_getAllBooks_seconds{quantile="0.95"} 0.031537084
+application_getAllBooks_seconds{quantile="0.98"} 0.031537084
+application_getAllBooks_seconds{quantile="0.99"} 0.031537084
+application_getAllBooks_seconds{quantile="0.999"} 0.031537084
+
+http://10.0.0.17:8080/metrics
+
+OpenAPI
+========
+OpenAPI Swagger UI & OAuth etc, see
+ https://www.phillip-kruger.com/post/microprofile_openapi_swaggerui/
+ https://github.com/phillip-kruger/apiee
+
+http://10.0.0.17:8080/openapi
+
+penapi: 3.0.0
+info:
+  title: This is my Book Store application API Title
+  description: This is my Book Store application description
+  version: 1.0.0
+servers:
+- url: http://localhost:8080
+paths:
+  /resources/books:
+    get:
+      summary: Outputs a list of books
+      description: This method outputs a list of books
+      operationId: getAll
+      responses:
+        200:
+          content:
+            application/json:
+              schema: {}
+          description: We have a list of books
+        404:
+          content:
+            text/plain: {}
+          description: We could not find anything
+    post:
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Default Response.
+  /resources/books/get-int-value:
+    get:
+      operationId: getIntValue
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                type: integer
+          description: Default Response.
+  /resources/books/mp-config:
+    get:
+      operationId: mpConfig
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Default Response.
+  /resources/books/{id}:
+    put:
+      operationId: update
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: number
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Default Response.
+    get:
+      operationId: getBook
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: number
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Default Response.
+    delete:
+      operationId: delete
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: number
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Default Response.
+  /resources/ping:
+    get:
+      operationId: ping
+      responses:
+        default:
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: Default Response.
+components:
+  schemas:
+    Book:
+      type: object
+      properties:
+        serialVersionUID:
+          type: number
+        id:
+          type: number
+        title:
+          type: string
+        description:
+          type: string
+        isbn:
+          type: string
+        publisher:
+          type: string
+        language:
+          type: string
+        author:
+          type: string
+        price:
+          type: number
+        pages:
+          type: integer
+        _persistence_fetchGroup:
+          type: object

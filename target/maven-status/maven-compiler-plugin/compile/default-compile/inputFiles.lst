@@ -1,0 +1,6 @@
+/Users/binu.b.varghese/source/quarkus/book-store/src/main/java/com/airhacks/JAXRSConfiguration.java
+/Users/binu.b.varghese/source/quarkus/book-store/src/main/java/com/airhacks/health/boundary/LivenessCheck.java
+/Users/binu.b.varghese/source/quarkus/book-store/src/main/java/com/binu/microprofile/bookstore/entity/Book.java
+/Users/binu.b.varghese/source/quarkus/book-store/src/main/java/com/binu/microprofile/bookstore/service/BookService.java
+/Users/binu.b.varghese/source/quarkus/book-store/src/main/java/com/airhacks/ping/boundary/PingResource.java
+/Users/binu.b.varghese/source/quarkus/book-store/src/main/java/com/binu/microprofile/bookstore/rest/BookStoreEndpoint.java
