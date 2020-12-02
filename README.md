@@ -1,6 +1,9 @@
 # Inspired from
 https://cicekhayri.github.io/ebook-Building-an-API-Backend-with-MicroProfile/building-an-api-backend-with-microprofile.pdf
 
+Microprofile is a java framework that is the reference and is implmented by multiple servers - this use Payara Glassfish ( eclipse)
+Microprofile feature in this project is also available on Quarkus.
+
 Tested..
 Open API 
 Rest Client 
